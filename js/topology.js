@@ -1,3 +1,6 @@
+/**
+ * The class for the playfields.
+ */
 class Topology{
     constructor(params){
         this.offsetX = params.offsetX;
@@ -8,9 +11,10 @@ class Topology{
         this.checked = [];
     }
 
-    /*
-        Adds destroyed ship parts to the list.
-    */
+    /**
+     * Adds an unspecified number of ships to the playfield.
+     * @param ...ships
+     */
     addShips(...ships){
         for (const ship of ships){
             if (!this.ships.includes(ship)){
@@ -21,9 +25,10 @@ class Topology{
         return this;
     }
 
-    /*
-        Adds checked cells to the list.
-    */
+    /**
+     * Adds an unspecified number of checked cells to the playfield.
+     * @param ...checks
+     */
     addChecks(...checks){
         for (const check of checks){
             if (!this.checked.includes(check)){
@@ -34,9 +39,10 @@ class Topology{
         return this;
     }
 
-    /*
-        Draws the ship according to given params {x, y, width, height, fill, stroke, fillStyle, strokeStyle}.
-    */
+    /**
+     * Draws a ship according to the ship parameters.
+     * @param {x, y, direct, size}
+     */
     drawShip(ship){
         drawRect({
             x: this.offsetX + ship.x * BOARD_CELL_SIZE + BOARD_CELL_SIZE,
@@ -50,6 +56,10 @@ class Topology{
         return this;
     }
 
+    /**
+     * Draws a circle in the specified cell.
+     * @param {x, y}
+     */
     drawCheck(check){
         drawArc({
             x: this.offsetX + check.x * BOARD_CELL_SIZE + BOARD_CELL_SIZE * 1.5,
@@ -64,11 +74,12 @@ class Topology{
         return this;
     }
 
-    /*
-        Draws the gameplay grid along with the numbers and letters.
-    */
+    /**
+     * Draws the playfield and all the letters and numbers.
+     * @param context
+     */
     drawBoard(context){
-        for (let i = 1; i < this.fieldSizeX + 2; i++){
+        for (let i = 1; i < this.fieldSizeX + 2; i++){ // vertical lines
             drawLine({
                 x0: this.offsetX + i * BOARD_CELL_SIZE,
                 y0: this.offsetY,
@@ -79,7 +90,7 @@ class Topology{
             })
         }
 
-        for (let i = 1; i < this.fieldSizeY + 2; i++){
+        for (let i = 1; i < this.fieldSizeY + 2; i++){ // horisontal lines
             drawLine({
                 x0: this.offsetX,
                 y0: this.offsetY + i * BOARD_CELL_SIZE,
@@ -92,7 +103,7 @@ class Topology{
         context.fillStyle = "blue";
         context.font = "25px Comic Sans MS";
 
-        for (let i = 1; i < this.fieldSizeY + 1; i++){
+        for (let i = 1; i < this.fieldSizeY + 1; i++){ // draws the numbers on the side
             const num = i.toString();
             context.fillText(
                 num,
@@ -101,7 +112,7 @@ class Topology{
             );
         }
 
-        for (let i = 0; i < this.fieldSizeX + 1; i++){
+        for (let i = 0; i < this.fieldSizeX + 1; i++){ // draws the letters on the top
             const letter = ALPHABET[i];
             context.fillText(
                 letter,
@@ -113,6 +124,10 @@ class Topology{
         return this;
     }
 
+    /**
+     * The entire playfield along with all the ships and checked cells.
+     * @param context
+     */
     drawAll(context){
         this.drawBoard(context);
 
@@ -127,6 +142,10 @@ class Topology{
         return this;
     }
 
+    /**
+     * Check if a point is within the bounds of this playfield.
+     * @param {x, y}
+     */
     isUnderPoint(point){
         if (
             (point.x < this.offsetX + BOARD_CELL_SIZE) ||
@@ -138,6 +157,10 @@ class Topology{
         return false;
     }
 
+    /**
+     * Get the cell in which the given point is located.
+     * @param {x, y}
+     */
     getCoords(point){
         if (this.isUnderPoint(point)){
             return false;
@@ -149,13 +172,17 @@ class Topology{
         }
     }
 
+    /**
+     * Check if a point is within the bounds of this playfield.
+     * @param {x, y}
+     */
     checkPlacement(ship){
-        if ((ship.direct === 0 && ship.x + ship.size > BOARD_COL_NUM) ||
+        if ((ship.direct === 0 && ship.x + ship.size > BOARD_COL_NUM) || // simple check on wether or not the ship firs into the board
             (ship.direct === 1 && ship.y + ship.size > BOARD_ROW_NUM)){
             return false;
         }
 
-        const map = new Array(BOARD_ROW_NUM);
+        const map = new Array(BOARD_ROW_NUM); // creates a map of possible ship locations
         
         for (let i = 0; i < BOARD_ROW_NUM; i++)
         {
@@ -166,8 +193,8 @@ class Topology{
             }
         }
         
-        for (const ship of this.ships){
-            if (ship.direct === 0){
+        for (const ship of this.ships){ // finds all the cells in the map where the given ship cannot be placed
+            if (ship.direct === 0){ // if the ship is horisontal
                 for (let x = ship.x - 1; x < ship.x + ship.size + 1; x++){
                     for (let y = ship.y - 1; y < ship.y + 2; y++){
                         if (map[y] && map[y][x]){
@@ -176,7 +203,7 @@ class Topology{
                     }
                 }
             }
-            else {
+            else { // if the ship is vertical
                 for (let x = ship.x - 1; x < ship.x + 2; x++){
                     for (let y = ship.y - 1; y < ship.y + ship.size + 1; y++){
                         if (map[y] && map[y][x]){
@@ -187,15 +214,15 @@ class Topology{
             }
         }
 
-        if (ship.direct === 0)
-        {
+        if (ship.direct === 0) // checks if all the parts of the ship are placed in available cells
+        { // if the ship is horisontal
             for (let i = 0; i < ship.size; i++){
                 if (!map[ship.y][ship.x + i]){
                     return false;
                 }
             }
         }
-        else {
+        else { // if the ship is vertical
             for (let i = 0; i < ship.size; i++){
                 if (!map[ship.y + i][ship.x]){
                     return false;
@@ -206,13 +233,16 @@ class Topology{
         return true;
     }
 
+    /**
+     * Randomly fills the field with ships.
+     */
     fill(){
         this.ships = [];
         
-        for (let i = 1; i < 5; i++){
-            for (let j = 0; j < SHIP_NUMS[i]; j++){
+        for (let i = 1; i < 5; i++){ // ship size from 1 to 4
+            for (let j = 0; j < SHIP_NUMS[i]; j++){ // number of ships spr=ecified in the constant
                 let flag = false;
-                while (!flag){
+                while (!flag){ // looks for a ship location until an available one is found
                     const ship = {
                         x: Math.floor(Math.random() * BOARD_COL_NUM),
                         y: Math.floor(Math.random() * BOARD_ROW_NUM),
@@ -221,12 +251,8 @@ class Topology{
                     };
 
                     if (this.checkPlacement(ship)){
-                        console.log("rgerg")
                         this.addShips(ship);
                         flag = true;
-                    }
-                    else {
-                        console.log("fwef")
                     }
                 }
             }

@@ -1,3 +1,6 @@
+/**
+ * The game itself.
+ */
 class Game{
     constructor(){
         this.state = "preparation";
@@ -14,20 +17,14 @@ class Game{
             fieldSizeX: BOARD_COL_NUM,
             fieldSizeY: BOARD_ROW_NUM,
         });
-
-        this.player.addShips(
-            { x: 0, y: 0, direct: 0, size: 3 },
-            { x: 0, y: 2, direct: 1, size: 4 }
-        );
-
-        this.player.addChecks(
-            { x: 4, y: 2 },
-            { x: 3, y: 1 }
-        );
         
         requestAnimationFrame(x => this.update(x));
     }
 
+    /**
+     * Updates the game screen.
+     * @param timestamp
+     */
     update(timestamp){
         requestAnimationFrame(x => this.update(x));
 
@@ -42,6 +39,10 @@ class Game{
         }
     }
 
+    /**
+     * Updates during the preparation stage of the game.
+     * @param timestamp
+     */
     updatePreparation(timestamp){
         
     }

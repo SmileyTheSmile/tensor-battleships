@@ -1,3 +1,5 @@
+// All the constants used in the game bundled together for easier editing.
+
 const ALPHABET = " АБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT = 500;

@@ -43,7 +43,7 @@ function drawRect(params){
 
 /**
  * Draws a circle according to given params.
- * @param {x, y, width, height, fill, stroke, fillStyle, strokeStyle}
+ * @param {x, y, radius, startAngle, endAngle, fill, stroke, fillStyle, strokeStyle}
  */
 function drawArc(params){
     if (!params.stroke && !params.fill){
@@ -65,8 +65,11 @@ function drawArc(params){
     }
 }
 
+/**
+ * Draws the notebook-like background.
+ */
 function drawGrid(){
-    for (let i = 0; i < canvas.height / CELL_SIZE; i++){
+    for (let i = 0; i < canvas.height / CELL_SIZE; i++){ // horisontal lines
         drawLine({
             x0: 0,
             y0: i * CELL_SIZE,
@@ -77,7 +80,7 @@ function drawGrid(){
         })
     }
     
-    for (let i = 0; i < canvas.width / CELL_SIZE; i++){
+    for (let i = 0; i < canvas.width / CELL_SIZE; i++){  // vertical lines
         drawLine({
             x0: i * CELL_SIZE,
             y0: 0,
@@ -89,7 +92,7 @@ function drawGrid(){
     }
 
     
-    drawLine({
+    drawLine({  // red line
         x0: 0,
         y0: RED_LINE_OFFSET,
         x1: canvas.width,
@@ -99,10 +102,16 @@ function drawGrid(){
     })
 }
 
+/**
+ * Clears the canvas.
+ */
 function clearCanvas(){
     canvas.width |= 0;
 }
 
+/**
+ * Returns the current location of the cursor.
+ */
 function getMouse(element){
     const mouse = {
         x: 0,
@@ -114,5 +123,6 @@ function getMouse(element){
         mouse.x = event.clientX - rect.left;
         mouse.y = event.clientY - rect.top;
     })
+
     return mouse;
 }
